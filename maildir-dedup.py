@@ -85,7 +85,8 @@ class MaildirDedup:
             os.mkdir(dedupfolder)
 
         try:
-            last_timestamp = float(open("%s/last_timestamp" % dedupfolder).read()) - 3600
+            with open("%s/last_timestamp" % dedupfolder, 'r') as f:
+                last_timestamp = float(f.read()) - 3600
         except (IOError, EOFError):
             last_timestamp = 0
 
@@ -108,7 +109,8 @@ class MaildirDedup:
             process_folder(afolder)
 
         last_timestamp = time.time()
-        open("%s/last_timestamp" % dedupfolder, "w").write(str(last_timestamp))
+        with open("%s/last_timestamp" % dedupfolder, "w") as f:
+            f.write(str(last_timestamp))
         self.stats = stats
         self.finished = True
         self.logger.info("Finished. %s files deduplicated.", stats["dedup"])
