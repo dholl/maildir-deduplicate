@@ -35,11 +35,12 @@ class MaildirDedup:
             raise IOError("No such folder: %s" % self.folder)
 
     @staticmethod
-    def calchash(filename):
-        """ Calculates content hash without consuming too much memory """
+    def calchash(filename, block_size=4*2**20):
+        """ Calculates content hash without consuming too much memory (default block_size of 4 MB) """
+        # Similar to http://stackoverflow.com/questions/1131220/get-md5-hash-of-big-files-in-python
         ahash = hashlib.sha512()
         with open(filename,'rb') as afile:
-            for data in afile:
+            for data in iter(lambda: afile.read(block_size), b''):
                 ahash.update(data)
         digest = ahash.hexdigest()
         folder = "%s/%s/%s" % (digest[0], digest[1], digest[2])
