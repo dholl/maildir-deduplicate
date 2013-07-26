@@ -37,10 +37,10 @@ class MaildirDedup:
     @staticmethod
     def calchash(filename):
         """ Calculates content hash without consuming too much memory """
-        afile = open(filename)
         ahash = hashlib.sha512()
-        for data in afile:
-            ahash.update(data)
+        with open(filename,'rb') as afile:
+            for data in afile:
+                ahash.update(data)
         digest = ahash.hexdigest()
         folder = "%s/%s/%s" % (digest[0], digest[1], digest[2])
         return (folder, digest)
